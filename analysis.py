@@ -15,11 +15,21 @@ data['Buy_Signal'] = (data['Close'] > data['SMA_20']) & (data['Close'].shift(1) 
 data['Daily_Return'] = data['Close'].pct_change()
 data['Rolling_Volatility'] = data['Daily_Return'].rolling(window=20).std()
 
+# Calculate Relative Strength Index
+def calculate_rsi(data, window=14):
+    delta = data['Close'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+data['RSI'] = calculate_rsi(data)
+
 # Plot everything together
 plt.figure(figsize=(14, 8))
 
 # Subplot 1: Closing Price, Simple Moving Averages, and Buy Signals
-plt.subplot(3, 1, 1)
+plt.subplot(4, 1, 1)
 plt.plot(data['Close'], label='Close Price', color='blue', alpha=0.3)
 plt.plot(data['SMA_20'], label='20-Day SMA', color='red', alpha=0.6)
 plt.plot(data['SMA_50'], label='50-Day SMA', color='green', alpha=0.6)
@@ -31,19 +41,31 @@ plt.ylabel('Price')
 plt.legend()
 
 # Subplot 2: Daily Returns 
-plt.subplot(3, 1, 2)
-plt.plot(data['Daily_Return'], label='Daily Returns', color='purple', alpha=0.6)
+plt.subplot(4, 1, 2)
+plt.plot(data['Daily_Return'], label='Daily Returns', color='turquoise', alpha=0.6)
 plt.title('Daily Returns')
 plt.xlabel('Date')
 plt.ylabel('Return')
 plt.legend()
 
 # Subplot 3: Rolling Volatillity
-plt.subplot(3, 1, 3)
-plt.plot(data['Rolling_Volatility'], label='20-Day Rolling Volatility', color='orange', alpha=0.75)
+plt.subplot(4, 1, 3)
+plt.plot(data['Rolling_Volatility'], label='20-Day Rolling Volatility', color='indianred', alpha=0.75)
 plt.title('Rolling Volatility')
 plt.xlabel('Date')
 plt.ylabel('Volatility')
+plt.legend()
+
+# Subplot 4: Relative Strength Index
+plt.subplot(4, 1, 4)
+plt.plot(data['RSI'], label='RSI', color='violet', alpha=0.75)
+plt.axhline(70, color='red', linestyle='--') # Sell signals
+plt.fill_between(data.index, data['RSI'], 70, where=(data['RSI'] >= 70), color='red', alpha=0.3)
+plt.axhline(30, color='green', linestyle='--') # Buy signals
+plt.fill_between(data.index, data['RSI'], 30, where=(data['RSI'] <= 30), color='green', alpha=0.3)
+plt.title('Relative Strength Index (RSI)')
+plt.xlabel('Date')
+plt.ylabel('RSI')
 plt.legend()
 
 plt.tight_layout()
