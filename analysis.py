@@ -52,7 +52,8 @@ plt.gca().xaxis.set_major_formatter(time_format)
 
 # Subplot 2: Daily Returns 
 plt.subplot(4, 1, 2)
-plt.plot(data['Daily_Return'], label='Daily Returns', color='turquoise', alpha=0.6)
+colors = data['Daily_Return'].apply(lambda x: 'green' if x > 0 else 'red')
+plt.bar(data.index, data['Daily_Return'], color=colors, alpha=0.6)
 plt.title('Daily Returns')
 plt.xlabel('Date')
 plt.ylabel('Return')
@@ -65,7 +66,7 @@ plt.gca().xaxis.set_major_formatter(time_format)
 # Subplot 3: Rolling Volatillity
 plt.subplot(4, 1, 3)
 plt.plot(data['Rolling_Volatility'], label='20-Day Rolling Volatility', color='indianred', alpha=0.75)
-plt.title('Rolling Volatility')
+plt.title('20-Day Rolling Volatility')
 plt.xlabel('Date')
 plt.ylabel('Volatility')
 plt.legend()
