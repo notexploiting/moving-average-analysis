@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 # Import the data (replace the first parameter with any .csv stock data)
 data = pd.read_csv('NVDA_stock_data.csv', index_col='Date', parse_dates=True)
@@ -28,6 +29,11 @@ data['RSI'] = calculate_rsi(data)
 # Plot everything together
 plt.figure(figsize=(14, 8))
 
+# Formatter for the date
+months = mdates.MonthLocator()
+days = mdates.DayLocator()
+time_format = mdates.DateFormatter('%Y %b %d') # e.g. 2023 Jan 12
+
 # Subplot 1: Closing Price, Simple Moving Averages, and Buy Signals
 plt.subplot(4, 1, 1)
 plt.plot(data['Close'], label='Close Price', color='blue', alpha=0.3)
@@ -40,6 +46,10 @@ plt.xlabel('Date')
 plt.ylabel('Price')
 plt.legend()
 
+plt.gca().xaxis.set_major_locator(months)
+plt.gca().xaxis.set_minor_locator(days)
+plt.gca().xaxis.set_major_formatter(time_format)
+
 # Subplot 2: Daily Returns 
 plt.subplot(4, 1, 2)
 plt.plot(data['Daily_Return'], label='Daily Returns', color='turquoise', alpha=0.6)
@@ -48,6 +58,10 @@ plt.xlabel('Date')
 plt.ylabel('Return')
 plt.legend()
 
+plt.gca().xaxis.set_major_locator(months)
+plt.gca().xaxis.set_minor_locator(days)
+plt.gca().xaxis.set_major_formatter(time_format)
+
 # Subplot 3: Rolling Volatillity
 plt.subplot(4, 1, 3)
 plt.plot(data['Rolling_Volatility'], label='20-Day Rolling Volatility', color='indianred', alpha=0.75)
@@ -55,6 +69,10 @@ plt.title('Rolling Volatility')
 plt.xlabel('Date')
 plt.ylabel('Volatility')
 plt.legend()
+
+plt.gca().xaxis.set_major_locator(months)
+plt.gca().xaxis.set_minor_locator(days)
+plt.gca().xaxis.set_major_formatter(time_format)
 
 # Subplot 4: Relative Strength Index
 plt.subplot(4, 1, 4)
@@ -67,6 +85,10 @@ plt.title('Relative Strength Index (RSI)')
 plt.xlabel('Date')
 plt.ylabel('RSI')
 plt.legend()
+
+plt.gca().xaxis.set_major_locator(months)
+plt.gca().xaxis.set_minor_locator(days)
+plt.gca().xaxis.set_major_formatter(time_format)
 
 plt.tight_layout()
 plt.show()
